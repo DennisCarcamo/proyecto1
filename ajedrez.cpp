@@ -19,145 +19,254 @@ void mover(int,int,int,int,char** matriz);
 void mover2(int,int,int,int,char** matriz);
 int distancias(int  ,int  ,int  , int );
 int alfilnum(int );
+void cargarpartida(char**,int,int );
+void guardarpartida(char**,int,int );
+bool reyblanco(char**, int ,int);
+bool reynegro(char**,int,int);
+
 
 int main(int argc, char* argv[]){
 	initscr();
 	start_color();
-	//resize_term(80,40);
-	init_pair(3,COLOR_GREEN,COLOR_BLACK);	
+	init_pair(3,COLOR_GREEN,COLOR_BLACK);
+	init_pair(10,COLOR_BLUE,COLOR_BLACK);	
+	init_pair(5,COLOR_MAGENTA,COLOR_BLACK);	
+	init_pair(12,COLOR_YELLOW,COLOR_BLACK);
 	int size=9;
 	int column=25;
 	move(5,18);
-	attron(COLOR_PAIR(3));
-	printw("*-*-*-*-*-*-AJEDREZ-*-*-*-*-*-*-*-*");
 	char** matriz=new char*[column];
-	
-	inicializarmatriz(matriz,size,column);
-	move(10,0);///para la impesion del tablero.
-	imprimir(matriz,size,column);
-
-
-	
-
-	bool seguirjuego=true;
-	
-	while(seguirjuego){
+	int opcion=0;
+	while(opcion!=3){
 		initscr();
-		int elegidoletra,elegidonum,moverletra,movernumero;
-		/*move();
-		printw("para jugar al ajedres, solamente indique 
-			la coordenada de la pieza a mover y luego la coordenada  hacia donde desea moverse");
-		printw("Las piezas estan representadas con la inicial de su respectivo nombre; las Mayusculas 
-			representan las piezas Negras y Las Minusculas Las piezas blancas siendo estas la primera en mover siempre");*/
-		move(11,31);
-		printw("-Minusculas = BLANCAS -");
-		move(11,55);
-		printw("   -Mayusculas = NEGRAS -");
-		
-		if(turn){	
-			move(13,31);
-			printw("Blancas: ");
-			int numberCounter = 0;//para elementos especiales de las coordenadas.
-			char number[4];//para guardar la coordenada
-			while(numberCounter <5 ){
-				noecho();
-				char temp;
-				temp = getch();
-				if(((temp>=65 && temp<=72)) && (numberCounter == 0 || numberCounter==3)){
-					echo();
-					addch(temp);
-					number[numberCounter] = temp;
-					numberCounter++;
-				} else if ((temp>= 49 && temp<=56) && (numberCounter==1 || numberCounter==4)){
-					echo();
-					addch(temp);
-					number[numberCounter] = temp;
-					numberCounter++;
-				}
-				if(numberCounter == 2 ){
-					temp='-';
-					echo();
-					addch(temp);
-					number[numberCounter] = temp;
-					numberCounter++;
-				}
-			}
+		attron(COLOR_PAIR(3));
+		mvprintw(5,30,"********* BIENVENIDOS A MI JUEGO DE AJEDREZ ****************");
+		attron(COLOR_PAIR(10));
+		mvprintw(7,40,"1 - Para cargar Partida Guardadada");
+		attron(COLOR_PAIR(5));
+		mvprintw(8,40,"2 - Para comenzar una partida nueva");
+		attron(COLOR_PAIR(12));
+		mvprintw(9,40,"3 - Salir");
+		opcion=getch();
 
-			getch();
-		
-			//**********************COORDENADA DE LA PIEZA A MOVER************
-			elegidoletra=cord_pieza(number);
-			elegidonum=cordnumerica1(number);
-			//************************COORDENADA HACIA A DONDE MOVER************
-			moverletra=cord_piezamov(number);
-			movernumero=cordnumerica2(number);
-			clear();
-			mover(elegidoletra,elegidonum,moverletra,movernumero,matriz);
-			
-			move(10,0);
-			imprimir(matriz,size,column);
-			
-			/*for (int i = 0; i < size; i++){
-				for (int j = 0; j < column; j++){
-					cout<<matriz[i][j];
-				}
-				cout<<" "<<endl;
-			}*/
-		
+		if (opcion=='1'){
+			cargarpartida(matriz,size,column);
+		}else if(opcion=='2'){
+			inicializarmatriz(matriz,size,column);
 		}else{
-			move(13,58);
-			printw("Negras:");
-			int numberCounter = 0;//para elementos especiales de las coordenadas.
-			char number[4];//para guardar la coordenada
-			while(numberCounter <5 ){
-				noecho();
-				char temp;
-				temp = getch();
-				if(((temp>=65 && temp<=72)) && (numberCounter == 0 || numberCounter==3)){
-					echo();
-					addch(temp);
-					number[numberCounter] = temp;
-					numberCounter++;
-				} else if ((temp>= 49 && temp<=56) && (numberCounter==1 || numberCounter==4)){
-					echo();
-					addch(temp);
-					number[numberCounter] = temp;
-					numberCounter++;
+			break;
+		}
+		clear();
+		move(10,0);
+		imprimir(matriz,size,column);
+		bool seguirjuego=true;
+		while(seguirjuego){
+			initscr();
+			char continuar;
+			move(5,18);
+		    attron(COLOR_PAIR(3));
+		    printw("*-*-*-*-*-*-AJEDREZ-*-*-*-*-*-*-*-*");
+			int elegidoletra,elegidonum,moverletra,movernumero;
+			move(11,31);
+			attron(COLOR_PAIR(10));
+			printw("-Minusculas = BLANCAS -");
+			move(11,55);
+			attron(COLOR_PAIR(5));
+			printw("   -Mayusculas = NEGRAS -");
+			
+			if(turn){	
+				move(13,31);
+				attron(COLOR_PAIR(10));
+				printw("Blancas: ");
+				int numberCounter = 0;//para elementos especiales de las coordenadas.
+				char number[4];//para guardar la coordenada
+				while(numberCounter <5 ){
+					noecho();
+					char temp;
+					temp = getch();
+					if(((temp>=65 && temp<=72)) && (numberCounter == 0 || numberCounter==3)){
+						echo();
+						addch(temp);
+						number[numberCounter] = temp;
+						numberCounter++;
+					} else if ((temp>= 49 && temp<=56) && (numberCounter==1 || numberCounter==4)){
+						echo();
+						addch(temp);
+						number[numberCounter] = temp;
+						numberCounter++;
+					}
+					if(numberCounter == 2 ){
+						temp='-';
+						echo();
+						addch(temp);
+						number[numberCounter] = temp;
+						numberCounter++;
+					}
 				}
-				if(numberCounter == 2 ){
-					temp='-';
-					echo();
-					addch(temp);
-					number[numberCounter] = temp;
-					numberCounter++;
+
+				getch();
+			
+				//**********************COORDENADA DE LA PIEZA A MOVER************
+				elegidoletra=cord_pieza(number);
+				elegidonum=cordnumerica1(number);
+				//************************COORDENADA HACIA A DONDE MOVER************
+				moverletra=cord_piezamov(number);
+				movernumero=cordnumerica2(number);
+				 
+				mover(elegidoletra,elegidonum,moverletra,movernumero,matriz);
+				
+				move(10,0);
+				imprimir(matriz,size,column);
+				char selection;
+				if(!turn){
+					mvprintw(20,30,"Desea gurdar y Salir s/n");
+					selection=getch();
+					if (selection=='s' || selection=='S' ){
+						guardarpartida(matriz,size,column);
+						seguirjuego=false;
+
+						break;
+					}
+
+					refresh();
+					
 				}
+			 
+			}else{
+				move(13,58);
+				attron(COLOR_PAIR(5));
+				printw("Negras:");
+				int numberCounter = 0;//para elementos especiales de las coordenadas.
+				char number[4];//para guardar la coordenada
+				while(numberCounter <5 ){
+					noecho();
+					char temp;
+					temp = getch();
+					if(((temp>=65 && temp<=72)) && (numberCounter == 0 || numberCounter==3)){
+						echo();
+						addch(temp);
+						number[numberCounter] = temp;
+						numberCounter++;
+					} else if ((temp>= 49 && temp<=56) && (numberCounter==1 || numberCounter==4)){
+						echo();
+						addch(temp);
+						number[numberCounter] = temp;
+						numberCounter++;
+					}
+					if(numberCounter == 2 ){
+						temp='-';
+						echo();
+						addch(temp);
+						number[numberCounter] = temp;
+						numberCounter++;
+					}
+				}
+
+				getch();
+
+
+				//**********************COORDENADA DE LA PIEZA A MOVER************
+				elegidoletra=cord_pieza(number);
+				elegidonum=cordnumerica1(number);
+				//************************COORDENADA HACIA A DONDE MOVER************
+				moverletra=cord_piezamov(number);
+				movernumero=cordnumerica2(number);
+	
+				mover2(elegidoletra,elegidonum,moverletra,movernumero,matriz);
+			
+				move(10,0);
+				imprimir(matriz,size,column);
+				char selection='a';
+				if(turn){
+					mvprintw(20,30,"Desea gurdar y Salir s/n");
+					selection=getch();
+					if (selection=='s' || selection=='S' ){
+						guardarpartida(matriz,size,column);
+						seguirjuego=false;
+						break;
+					}
+					mvprintw(20,30,"");
+					refresh();
+				}
+
 			}
-
-			getch();
-
-
-			//**********************COORDENADA DE LA PIEZA A MOVER************
-			elegidoletra=cord_pieza(number);
-			elegidonum=cordnumerica1(number);
-			//************************COORDENADA HACIA A DONDE MOVER************
-			moverletra=cord_piezamov(number);
-			movernumero=cordnumerica2(number);
-			clear();
-			mover2(elegidoletra,elegidonum,moverletra,movernumero,matriz);
-		
-			move(10,0);
-			imprimir(matriz,size,column);
-			//turn=true; //QUITA ESTO DESPUES SIRVE SOLO PARA PROBAR.
+			
 
 
 
 
 		}
-		refresh();
 
 
 
 
+
+
+
+
+
+
+
+
+
+	
+		endwin();
+	}
+
+	getch();
+	endwin();
+	return 0;
+}
+
+
+
+bool reyblanco(char** matriz,int size, int column){
+	bool seguirjuego=false;
+	for (int i = 0; i < size; i++){
+		for (int j = 0; j < column; j++){
+			if (matriz[i][j]=='r'){
+				seguirjuego=true;
+			}
+			
+		}
+	}
+	return seguirjuego;
+}
+
+bool reynegro(char** matriz, int size, int column){
+	bool seguirjuego=false;
+	for (int i = 0; i < size; i++){
+		for (int j = 0; j < column; j++){
+			if (matriz[i][j]=='R'){
+				seguirjuego=true;
+			}
+		}
+	}
+	return seguirjuego;
+}
+
+
+
+bool esjaque(char** matriz, int size, int column, int jugador){
+ 	char rey;
+ 	if (jugador==1){
+ 		rey='r';	
+ 	}else{
+ 		rey='R';
+	}
+
+ 	int numerorey, columnarey;
+	for (int i = 0; i < size; i++){
+  		for (int j=2;j<column; j+3){
+	 		if (matriz[i][j]==rey){
+			 	numerorey=i;
+			 	columnarey=j;
+	 		}
+	 	}
+	}
+
+	char tablero[8][23];
+	for (int i = 0; i < size; i++){
 	}
 
 
@@ -166,15 +275,37 @@ int main(int argc, char* argv[]){
 
 
 
+}
+
+bool jaquemate(){
 
 
+}
+////////////////este guarda//////////////////////
+void guardarpartida(char** matriz,int size, int column){
+	cout<<"HOLA"<<endl;
+	FILE *partidaguardada=fopen("partidaguardada.bin","wb");
+	for (int i = 0; i < size; i++){
+		for (int j = 0; j < column; j++){
+			fwrite(&(matriz[i][j]),sizeof(char**),1,partidaguardada);
+		}
+	}
+}
+///////////////este carga///////////////////////////////
+void cargarpartida(char** matriz, int size, int column){
 
 
+	FILE *partidaguardada=fopen("partidaguardada.bin","rbS");
 
 
-	getch();
-	endwin();
-	return 0;
+	for (int i = 0; i < size; i++){
+		for (int j = 0; j < column; j++){
+			fread(&(matriz[i][j]),sizeof(char**),1,partidaguardada);
+		}
+	}
+
+
+	fclose(partidaguardada);
 }
 
 void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char** matriz){
@@ -182,13 +313,13 @@ void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char
 		int distancia=distancias(elegidoletra,elegidonum,moverletra,movernumero);
 //************************************************************* PEONES BLANCOS *********************************************************************************************
 	if (matriz[elegidonum][elegidoletra]=='p'){
-		//cout<<"pieza "<<matriz[elegidonum][elegidoletra]<<endl;
-		if(elegidonum==2 && distancia!=-1){
-		addch(distancia+48);
+		if(elegidonum==2  && elegidoletra==moverletra){
+		
 			if(distancia==2){
 				//////////////////////////////////////////
+
 				
-				if (matriz[elegidonum+1][elegidoletra]=='p' || matriz[elegidonum+1][elegidoletra]=='t' || matriz[elegidonum+1][elegidoletra]=='c' ||
+				if (matriz[elegidonum+1][elegidoletra]=='p' || matriz[elegidonum+1][elegidoletra]=='t'|| matriz[elegidonum+1]	[elegidoletra]=='c' ||
 				   	matriz[elegidonum+1][elegidoletra]=='a' || matriz[elegidonum+1][elegidoletra]=='r' || matriz[elegidonum+1][elegidoletra]=='q'    ){
 						printw ("pieza amiga, bloquea el paso");
 
@@ -197,67 +328,80 @@ void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char
 						printw ("pieza enemiga, bloquea el paso");
 						 
 				}
+
+
 				if(matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='t' || matriz[movernumero][moverletra]=='c' ||
 						matriz[movernumero][moverletra]=='a'  || matriz[movernumero][moverletra]=='r' ||matriz[movernumero][moverletra]=='q'){
-					//"Ya existe una pieza amiga en esta pocicion"
+					printw("Ya existe una pieza amiga en esta pocicion");
 
 				}else{
 					matriz[elegidonum][elegidoletra]='_';
 					matriz[movernumero][moverletra]='p';
 					turn=false;
 				}
+
+
+
 			
 			}else if (distancia==1){
-				if (matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='t' || matriz[movernumero][moverletra]=='c' ||
-						matriz[movernumero][moverletra]=='a'  || matriz[movernumero][moverletra]=='r' ||matriz[movernumero][moverletra]=='q'){
+				if(matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='t' || matriz[movernumero][moverletra]=='c' ||
+					matriz[movernumero][moverletra]=='a'  || matriz[movernumero][moverletra]=='r' ||matriz[movernumero][moverletra]=='q'){
 						printw("Ya existe una pieza amiga en esta pocicion");
+				}else if(matriz[movernumero][moverletra]=='P' || matriz[movernumero][moverletra]=='T' || matriz[movernumero][moverletra]=='C' ||
+					matriz[movernumero][moverletra]=='A'  || matriz[movernumero][moverletra]=='R' ||matriz[movernumero][moverletra]=='Q'){
+						printw("no puede comer en linea recta");
 				}else{
 					matriz[elegidonum][elegidoletra]='_';
 					matriz[movernumero][moverletra]='p';
 					turn=false;
 				}
 			}
-			
-			
-		}else if (elegidonum!=1 && distancia==1){
+
+
+
+		}else if(elegidonum!=2 && distancia==1  && elegidoletra==moverletra){
 			if (matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='t' || matriz[movernumero][moverletra]=='c' ||
-					matriz[movernumero][moverletra]=='a'  || matriz[movernumero][moverletra]=='r' ||matriz[movernumero][moverletra]=='q'){
-					printw("Ya existe una pieza amiga en esta pocicion");
-			}else{
+				matriz[movernumero][moverletra]=='a'  || matriz[movernumero][moverletra]=='r' ||matriz[movernumero][moverletra]=='q'){
+				printw("Ya existe una pieza amiga en esta pocicion");	
+			}else if(matriz[movernumero][moverletra]=='P' || matriz[movernumero][moverletra]=='T' || matriz[movernumero][moverletra]=='C' ||
+				matriz[movernumero][moverletra]=='A'  || matriz[movernumero][moverletra]=='R' ||matriz[movernumero][moverletra]=='Q'){
+				printw("no puede comer en linea recta con PEONES");	
+			}else {
 				matriz[elegidonum][elegidoletra]='_';
 				matriz[movernumero][moverletra]='p';
-				turn=false;
+				turn=false;	
 			}
-		}else if(distancia==3){
-			if (matriz[movernumero][elegidoletra+3]=='P' || matriz[movernumero][elegidoletra+3]=='T' || matriz[movernumero][elegidoletra+3]=='C' ||
-			    matriz[movernumero][elegidoletra+3]=='A' || matriz[movernumero][elegidoletra+3]=='R' || matriz[movernumero][elegidoletra+3]=='Q'    ){
-					matriz[elegidonum][elegidoletra]='_';
-					matriz[movernumero][moverletra+3]='p';
-					turn=false;
+
+
+
+
+		}else if(distancia==3  && elegidoletra != moverletra){
+			if(matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='t' || matriz[movernumero][moverletra]=='c' ||
+				matriz[movernumero][moverletra]=='a'  || matriz[movernumero][moverletra]=='r' ||matriz[movernumero][moverletra]=='q'){
+				printw("Ya existe una pieza amiga en esta pocicion");	
 			}else{
-				printw("no puede moverse diagonalmente");
+				matriz[elegidonum][elegidoletra]='_';
+					matriz[movernumero][moverletra]='p';
+					turn=false;
 			}
-		}else if(distancia==-1){
-				mvprintw(20,30,"movimiento invalido");
-
-
+		}else {
+			printw("movimiento invalido");
 		}
 
 //************************************************************* TORRES BLANCAS *********************************************************************************************
-
 	}else if (matriz[elegidonum][elegidoletra]=='t'){
 		bool puede=true;
 		if (elegidoletra==moverletra && elegidonum!=movernumero){
 			for (int j= elegidonum+1; j<movernumero; j++){
 				if (matriz[j][elegidoletra]=='P' || matriz[j][elegidoletra]=='T' || matriz[j][elegidoletra]=='C' || 
 					matriz[j][elegidoletra]=='A' ||matriz[j][elegidoletra]=='R' || matriz[j][elegidoletra]=='Q' ){
-					printw("paso bloqueado por pieza enemiga1");
+					printw("paso bloqueado por pieza enemiga");
 					puede=false;
 				
 					break;
 				}else if(matriz[j][elegidoletra]=='p' || matriz[j][elegidoletra]=='t' || matriz[j][elegidoletra]=='c' || 
 					matriz[j][elegidoletra]=='a' ||matriz[j][elegidoletra]=='r' || matriz[j][elegidoletra]=='q' ){
-					printw("paso bloqueado por pieza amiga1");
+					printw("paso bloqueado por pieza amiga");
 					puede=false;
 					break;
 				}
@@ -270,13 +414,13 @@ void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char
 				for (int i = elegidoletra+3; i <moverletra; i++){
 					if (matriz[elegidonum][i]=='P' || matriz[elegidonum][i]=='T' || matriz[elegidonum][i]=='C' || 
 						matriz[elegidonum][i]=='A' || matriz[elegidonum][i]=='C' || matriz[elegidonum][i]=='Q'){
-						printw("paso bloqueado por pieza enemiga2");
+						printw("paso bloqueado por pieza enemiga");
 						puede=false;
 						break;	
 
 					}else if(matriz[elegidonum][i]=='p' || matriz[elegidonum][i]=='t' || matriz[elegidonum][i]=='c' || 
 						matriz[elegidonum][i]=='a' || matriz[elegidonum][i]=='r' || matriz[elegidonum][i]=='q'){
-						printw("paso bloqueado por amiga2");	
+						printw("paso bloqueado por amiga");	
 						puede=false;
 						break;
 					}
@@ -287,13 +431,13 @@ void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char
 				for (int i = elegidoletra-3; i <moverletra; i--){
 					if (matriz[elegidonum][i]=='P' || matriz[elegidonum][i]=='T' || matriz[elegidonum][i]=='C' || 
 						matriz[elegidonum][i]=='A' || matriz[elegidonum][i]=='C' || matriz[elegidonum][i]=='Q'){
-						printw("paso bloqueado por pieza enemiga2");
+						printw("paso bloqueado por pieza enemiga");
 						puede=false;
 						break;	
 
 					}else if(matriz[elegidonum][i]=='p' || matriz[elegidonum][i]=='t' || matriz[elegidonum][i]=='c' || 
 						matriz[elegidonum][i]=='a' || matriz[elegidonum][i]=='r' || matriz[elegidonum][i]=='q'){
-						printw("paso bloqueado por amiga2");	
+						printw("paso bloqueado por amiga");	
 						puede=false;
 						break;
 					}
@@ -322,11 +466,6 @@ void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char
 	}else if (matriz[elegidonum][elegidoletra]=='c'){
 		bool puede=true;
 		if (movernumero==(elegidonum+2)  &&  moverletra==(elegidoletra-3)){
-			/*if (matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='p' ||
-				matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='p'  ){
-				printw("Ya existe una pieza amiga en esta poscicion");
-				puede=false;
-			}*/
 			puede=true;
 		}else if (movernumero==(elegidonum+1) && moverletra==(elegidoletra-6)){
 			puede=true;
@@ -364,11 +503,6 @@ void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char
 //************************************************************** ALFILES BLANCOS *******************************************************************************************
 
 	}else if (matriz[elegidonum][elegidoletra]=='a'){
-		printw("elegidonum");
-		addch(elegidonum+48);
-		printw("            movernum");
-		addch(movernumero+48);
-
 		int valorletraelejida=(alfilnum(elegidoletra));
 		int  valornumeroletramover=(alfilnum(moverletra));
 		bool puede=true;
@@ -463,99 +597,27 @@ void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char
 //**************************************************************REINA BLANCA************************************************************************************************
 
 	}else if (matriz[elegidonum][elegidoletra]=='q'){
-		bool puede=false;
 		int valorletraelejida=(alfilnum(elegidoletra));
 		int  valornumeroletramover=(alfilnum(moverletra));
-		if (movernumero==(elegidonum+1) && moverletra==(elegidoletra+3)){
-			puede=true;
-		}else if (movernumero==elegidonum && moverletra==(elegidoletra+3)){
-			puede=true;
-		}else if(movernumero==(elegidonum-1) && moverletra==(elegidoletra+3)){
-			puede=true;
-		}else if(movernumero==(elegidonum+1) && moverletra==elegidoletra){
-			puede=true;
-		}else if (movernumero==(elegidonum-1) && moverletra==(elegidoletra)){
-			puede=true;
-		}else if(movernumero==(elegidonum+1) && moverletra==(elegidoletra-3)){
-			puede=true;
-		}else if(movernumero==(elegidonum) && moverletra==(elegidoletra-3)){
-			puede=true;
-		}else if(movernumero==(elegidonum-1) && moverletra==(elegidoletra-3)){
-			puede=true;
-		}else  if (elegidoletra==moverletra && elegidonum!=movernumero){
-			for (int j= elegidonum+1; j<movernumero; j++){
-				if (matriz[j][elegidoletra]=='P' || matriz[j][elegidoletra]=='T' || matriz[j][elegidoletra]=='C' || 
-					matriz[j][elegidoletra]=='A' ||matriz[j][elegidoletra]=='R' || matriz[j][elegidoletra]=='Q' ){
-					printw("paso bloqueado por pieza enemiga1");
-					puede=false;
-				
-					break;
-				}else if(matriz[j][elegidoletra]=='p' || matriz[j][elegidoletra]=='t' || matriz[j][elegidoletra]=='c' || 
-					matriz[j][elegidoletra]=='a' ||matriz[j][elegidoletra]=='r' || matriz[j][elegidoletra]=='q' ){
-					printw("paso bloqueado por pieza amiga1");
-					puede=false;
-					break;
-				}
-			}
-		}else if(elegidoletra!=moverletra && elegidonum==movernumero){
+		bool puede=true;
 
-			if (elegidoletra<moverletra){
-				
-				
-				for (int i = elegidoletra+3; i <moverletra; i++){
-					if (matriz[elegidonum][i]=='P' || matriz[elegidonum][i]=='T' || matriz[elegidonum][i]=='C' || 
-						matriz[elegidonum][i]=='A' || matriz[elegidonum][i]=='C' || matriz[elegidonum][i]=='Q'){
-						printw("paso bloqueado por pieza enemiga2");
-						puede=false;
-						break;	
 
-					}else if(matriz[elegidonum][i]=='p' || matriz[elegidonum][i]=='t' || matriz[elegidonum][i]=='c' || 
-						matriz[elegidonum][i]=='a' || matriz[elegidonum][i]=='r' || matriz[elegidonum][i]=='q'){
-						printw("paso bloqueado por amiga2");	
-						puede=false;
-						break;
-					}
 
-					i+=2;
-				}
-			}else{
-				for (int i = elegidoletra-3; i <moverletra; i--){
-					if (matriz[elegidonum][i]=='P' || matriz[elegidonum][i]=='T' || matriz[elegidonum][i]=='C' || 
-						matriz[elegidonum][i]=='A' || matriz[elegidonum][i]=='C' || matriz[elegidonum][i]=='Q'){
-						printw("paso bloqueado por pieza enemiga2");
-						puede=false;
-						break;	
-
-					}else if(matriz[elegidonum][i]=='p' || matriz[elegidonum][i]=='t' || matriz[elegidonum][i]=='c' || 
-						matriz[elegidonum][i]=='a' || matriz[elegidonum][i]=='r' || matriz[elegidonum][i]=='q'){
-						printw("paso bloqueado por amiga2");	
-						puede=false;
-						break;
-					}
-
-					i-=2;
-				}
-
-			}
-		}else if (elegidoletra!=elegidonum  && movernumero!=moverletra){
-			puede=false;
-		}else  if(abs(valorletraelejida-valornumeroletramover) && abs(elegidonum-movernumero)){
-		 
+		if(abs(valorletraelejida-valornumeroletramover) && abs(elegidonum-movernumero)){
+			puede=true;
 			if (elegidoletra < moverletra && elegidonum>movernumero){
 				int j=elegidoletra;
 				for (int i = elegidonum-1; i >movernumero-1 ; --i){
 					j-=3;
 					if (matriz[elegidonum][elegidoletra]=='p' || matriz[elegidonum][elegidoletra]=='t' || matriz[elegidonum][elegidoletra]=='c' ||
-						matriz[elegidonum][elegidoletra]=='a' || matriz[elegidonum][elegidoletra]=='r' || matriz[elegidonum][elegidoletra]=='r'){
-						turn=false;
-						printw("pieza amiga en el camino 1");
-						puede=false;
+						matriz[elegidonum][elegidoletra]=='a' || matriz[elegidonum][elegidoletra]=='r' || matriz[elegidonum][elegidoletra]=='q'){
+						turn=true;
+						printw("pieza amiga en el camino");
 						break;
 					}else if(matriz[elegidonum][j]=='P' || matriz[elegidonum][j]=='T' || matriz[elegidonum][j]=='C' ||
 						matriz[elegidonum][j]=='A' || matriz[elegidonum][j]=='Q' || matriz[elegidonum][j]=='R'){
-						turn=false;
-						puede=false;
-						printw("pieza enemiga en el camino 2" );
+						turn=true;
+						printw("pieza enemiga en el camino" );
 						break;
 					}
 
@@ -565,10 +627,9 @@ void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char
 				for (int i = elegidonum+1; i >movernumero-1 ; ++i){
 					 j+=3;
 					if (matriz[elegidonum][elegidoletra]=='p' || matriz[elegidonum][elegidoletra]=='t' || matriz[elegidonum][elegidoletra]=='c' ||
-						matriz[elegidonum][elegidoletra]=='a' || matriz[elegidonum][elegidoletra]=='r' || matriz[elegidonum][elegidoletra]=='r'){
-						turn=false;
-						printw("pieza amiga en el camino 3");
-						puede=false;
+						matriz[elegidonum][elegidoletra]=='a' || matriz[elegidonum][elegidoletra]=='r' || matriz[elegidonum][elegidoletra]=='q'){
+						turn=true;
+						printw("pieza amiga en el camino");
 						break;
 					}else if(matriz[elegidonum][j]=='P' || matriz[elegidonum][j]=='T' || matriz[elegidonum][j]=='C' ||
 						matriz[elegidonum][j]=='A' || matriz[elegidonum][j]=='Q' || matriz[elegidonum][j]=='R'){
@@ -582,15 +643,13 @@ void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char
 				for (int i = elegidonum+1; i > movernumero-1; ++i){
 					j+=3;
 					if (matriz[elegidonum][j]=='p' || matriz[elegidonum][j]=='t' || matriz[elegidonum][j]=='c' ||
-						matriz[elegidonum][j]=='a' || matriz[elegidonum][j]=='r' || matriz[elegidonum][j]=='r'){
-						turn=false;
-						puede=false;
-						printw("pieza amiga en el camino 5" );
+						matriz[elegidonum][j]=='a' || matriz[elegidonum][j]=='q' || matriz[elegidonum][j]=='r'){
+						turn=true;
+						printw("pieza amiga en el camino" );
 						break;
 					}else if(matriz[elegidonum][j]=='P' || matriz[elegidonum][j]=='T' || matriz[elegidonum][j]=='C' ||
 						matriz[elegidonum][j]=='A' || matriz[elegidonum][j]=='Q' || matriz[elegidonum][j]=='R'){
-						turn=false;
-						puede=false;
+						turn=true;
 						printw("pieza enemiga en el camino");
 						break;
 					}
@@ -600,35 +659,89 @@ void mover(int elegidoletra,int elegidonum,int moverletra, int movernumero ,char
 				for (int i = elegidonum; i < movernumero+1; --i){
 				 	j-=3;
 				 	if (matriz[elegidonum][j]=='p' || matriz[elegidonum][j]=='t' || matriz[elegidonum][j]=='c' ||
-						matriz[elegidonum][j]=='a' || matriz[elegidonum][j]=='r' || matriz[elegidonum][j]=='r'){
-						turn=false;
-						puede=false;
-						printw("pieza amiga en el camino 6");
+						matriz[elegidonum][j]=='a' || matriz[elegidonum][j]=='q' || matriz[elegidonum][j]=='r'){
+						turn=true;
+						printw("pieza amiga en el camino");
 						break;
 					}else if(matriz[elegidonum][j]=='P' || matriz[elegidonum][j]=='T' || matriz[elegidonum][j]=='C' ||
 						matriz[elegidonum][j]=='A' || matriz[elegidonum][j]=='Q' || matriz[elegidonum][j]=='R'){
-						turn=false;
-						puede=false;
+						turn=true;
 						printw("pieza enemiga en el camino");
 						break;
 					}
 				}
 			}
-		}
-
-
-		if (puede){
-			if (matriz[elegidonum][elegidoletra]=='p' || matriz[elegidonum][elegidoletra]=='t' || matriz[elegidonum][elegidoletra]=='c' ||
-				matriz[elegidonum][elegidoletra]=='a' || matriz[elegidonum][elegidoletra]=='r' ){
-				printw("hay una pieza amiga en esa poscicon");
+		}else if (elegidoletra==moverletra && elegidonum!=movernumero){
+			for (int j= elegidonum+1; j<movernumero; j++){
+				if (matriz[j][elegidoletra]=='P' || matriz[j][elegidoletra]=='T' || matriz[j][elegidoletra]=='C' || 
+					matriz[j][elegidoletra]=='A' ||matriz[j][elegidoletra]=='R' || matriz[j][elegidoletra]=='Q' ){
+					printw("paso bloqueado por pieza enemiga");
+					puede=false;
 				
+					break;
+				}else if(matriz[j][elegidoletra]=='p' || matriz[j][elegidoletra]=='t' || matriz[j][elegidoletra]=='c' || 
+					matriz[j][elegidoletra]=='a' ||matriz[j][elegidoletra]=='r' || matriz[j][elegidoletra]=='q' ){
+					printw("paso bloqueado por pieza amiga");
+					puede=false;
+					break;
+				}
+			}
+		}else if(elegidoletra!=moverletra && elegidonum==movernumero){
+
+			if (elegidoletra<moverletra){
+				
+				
+				for (int i = elegidoletra+3; i <moverletra; i++){
+					if (matriz[elegidonum][i]=='P' || matriz[elegidonum][i]=='T' || matriz[elegidonum][i]=='C' || 
+						matriz[elegidonum][i]=='A' || matriz[elegidonum][i]=='C' || matriz[elegidonum][i]=='Q'){
+						printw("paso bloqueado por pieza enemiga");
+						puede=false;
+						break;	
+
+					}else if(matriz[elegidonum][i]=='p' || matriz[elegidonum][i]=='t' || matriz[elegidonum][i]=='c' || 
+						matriz[elegidonum][i]=='a' || matriz[elegidonum][i]=='r' || matriz[elegidonum][i]=='q'){
+						printw("paso bloqueado por amiga");	
+						puede=false;
+						break;
+					}
+
+					i+=2;
+				}
 			}else{
+				for (int i = elegidoletra-3; i <moverletra; i--){
+					if (matriz[elegidonum][i]=='P' || matriz[elegidonum][i]=='T' || matriz[elegidonum][i]=='C' || 
+						matriz[elegidonum][i]=='A' || matriz[elegidonum][i]=='C' || matriz[elegidonum][i]=='Q'){
+						printw("paso bloqueado por pieza enemiga");
+						puede=false;
+						break;	
+
+					}else if(matriz[elegidonum][i]=='p' || matriz[elegidonum][i]=='t' || matriz[elegidonum][i]=='c' || 
+						matriz[elegidonum][i]=='a' || matriz[elegidonum][i]=='r' || matriz[elegidonum][i]=='q'){
+						printw("paso bloqueado por amiga");	
+						puede=false;
+						break;
+					}
+
+					i-=2;
+				}
+
+			}
+		}else if (elegidoletra!=elegidonum  && movernumero!=moverletra){
+			puede=false;
+		}
+		
+		if (puede){
+			if(matriz[movernumero][moverletra]=='p' ||  matriz[movernumero][moverletra]=='t' || matriz[movernumero][moverletra]=='c' || 
+			matriz[movernumero][moverletra]=='a' || matriz[movernumero][moverletra]=='r' || matriz[movernumero][moverletra]=='q'){
+				printw("Ya existe una pieza amiga en esa pocicion");
+			}else {
 				matriz[elegidonum][elegidoletra]='_';
 				matriz[movernumero][moverletra]='q';
+				turn=false;
 			}
 		}
 
-/////////////////**********************************************REY BLANCO***************************************************************************************************
+//*****************************************************************REY BLANCO***********************************************************************************************
 	}else if (matriz[elegidonum][elegidoletra]=='r'){
 		bool puede=false;
 		if (movernumero==(elegidonum+1) && moverletra==(elegidoletra+3)){
@@ -675,11 +788,11 @@ void mover2(int elegidoletra,int elegidonum,int moverletra, int movernumero ,cha
 		int distancia=distancias(elegidoletra,elegidonum,moverletra,movernumero);
 //************************************************************* PEONES NEGROS **********************************************************************************************
 	if (matriz[elegidonum][elegidoletra]=='P'){
-		//cout<<"pieza "<<matriz[elegidonum][elegidoletra]<<endl;
-		if(elegidonum==7 && distancia!=-1){
-			addch(distancia+48);
+		if(elegidonum==2  && elegidoletra==moverletra){
+		
 			if(distancia==2){
 				//////////////////////////////////////////
+
 				
 				if (matriz[elegidonum+1][elegidoletra]=='P' || matriz[elegidonum+1][elegidoletra]=='T' || matriz[elegidonum+1][elegidoletra]=='C' ||
 				   	matriz[elegidonum+1][elegidoletra]=='A' || matriz[elegidonum+1][elegidoletra]=='R' || matriz[elegidonum+1][elegidoletra]=='Q'    ){
@@ -688,54 +801,68 @@ void mover2(int elegidoletra,int elegidonum,int moverletra, int movernumero ,cha
 				}else if(matriz[elegidonum+1][elegidoletra]=='p' || matriz[elegidonum+1][elegidoletra]=='t' || matriz[elegidonum+1][elegidoletra]=='c' ||
 				    matriz[elegidonum+1][elegidoletra]=='a' || matriz[elegidonum+1][elegidoletra]=='r' || matriz[elegidonum+1][elegidoletra]=='q'    ){
 						printw ("pieza enemiga, bloquea el paso");
-						 
+					 
 				}
-				if(matriz[movernumero][moverletra]=='P'|| matriz[movernumero][moverletra]=='T' || matriz[movernumero][moverletra]=='C' ||
-						matriz[movernumero][moverletra]=='A'  || matriz[movernumero][moverletra]=='R' ||matriz[movernumero][moverletra]=='Q'){
-					//"Ya existe una pieza amiga en esta pocicion"
 
+
+				if(matriz[movernumero][moverletra]=='P' || matriz[movernumero][moverletra]=='T' || matriz[movernumero][moverletra]=='C' ||
+						matriz[movernumero][moverletra]=='A'  || matriz[movernumero][moverletra]=='R' ||matriz[movernumero][moverletra]=='Q'){
+					printw("Ya existe una pieza amiga en esta pocicion");
+				
 				}else{
 					matriz[elegidonum][elegidoletra]='_';
 					matriz[movernumero][moverletra]='P';
 					turn=true;
 				}
+
+
+
 			
 			}else if (distancia==1){
-				if (matriz[movernumero][moverletra]=='P' || matriz[movernumero][moverletra]=='T' || matriz[movernumero][moverletra]=='C' ||
-						matriz[movernumero][moverletra]=='A'  || matriz[movernumero][moverletra]=='R' ||matriz[movernumero][moverletra]=='Q'){
+				if(matriz[movernumero][moverletra]=='P' || matriz[movernumero][moverletra]=='T' || matriz[movernumero][moverletra]=='C' ||
+					matriz[movernumero][moverletra]=='A'  || matriz[movernumero][moverletra]=='R' ||matriz[movernumero][moverletra]=='Q'){
 						printw("Ya existe una pieza amiga en esta pocicion");
+				}else if(matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='t' || matriz[movernumero][moverletra]=='c' ||
+					matriz[movernumero][moverletra]=='a'  || matriz[movernumero][moverletra]=='r' ||matriz[movernumero][moverletra]=='q'){
+						printw("no puede comer en linea recta");
 				}else{
 					matriz[elegidonum][elegidoletra]='_';
 					matriz[movernumero][moverletra]='P';
 					turn=true;
 				}
 			}
-			
-			
-		}else if (elegidonum!=1 && distancia==1){
+
+
+
+		}else if(elegidonum!=2 && distancia==1  && elegidoletra==moverletra){
 			if (matriz[movernumero][moverletra]=='P' || matriz[movernumero][moverletra]=='T' || matriz[movernumero][moverletra]=='C' ||
 					matriz[movernumero][moverletra]=='A'  || matriz[movernumero][moverletra]=='R' ||matriz[movernumero][moverletra]=='Q'){
-					printw("Ya existe una pieza amiga en esta pocicion");
-			}else{
+				printw("Ya existe una pieza amiga en esta pocicion");	
+			}else if(matriz[movernumero][moverletra]=='p' || matriz[movernumero][moverletra]=='t' || matriz[movernumero][moverletra]=='c' ||
+					matriz[movernumero][moverletra]=='a'  || matriz[movernumero][moverletra]=='r' ||matriz[movernumero][moverletra]=='q'){
+				printw("no puede comer en linea recta con PEONES");	
+			}else {
 				matriz[elegidonum][elegidoletra]='_';
 				matriz[movernumero][moverletra]='P';
-				turn=true;
+				turn=true;	
 			}
-		}else if(distancia==3){
-			if (matriz[movernumero][elegidoletra+3]=='p' || matriz[movernumero][elegidoletra+3]=='t' || matriz[movernumero][elegidoletra+3]=='c' ||
-			    matriz[movernumero][elegidoletra+3]=='a' || matriz[movernumero][elegidoletra+3]=='r' || matriz[movernumero][elegidoletra+3]=='q'    ){
-					matriz[elegidonum][elegidoletra]='_';
-					matriz[movernumero][moverletra+3]='P';
-					turn=true;
+
+
+
+
+		}else if(distancia==3  && elegidoletra != moverletra){
+			if(matriz[movernumero][moverletra]=='P' || matriz[movernumero][moverletra]=='T' || matriz[movernumero][moverletra]=='C' ||
+					matriz[movernumero][moverletra]=='A'  || matriz[movernumero][moverletra]=='R' ||matriz[movernumero][moverletra]=='Q'){
+				printw("Ya existe una pieza amiga en esta pocicion");	
 			}else{
-				printw("no puede moverse diagonalmente");
+				matriz[elegidonum][elegidoletra]='_';
+					matriz[movernumero][moverletra]='P';
+					turn=true;
 			}
-		}else if(distancia==-1){
-				mvprintw(20,30,"movimiento invalido");
-
-
+		}else {
+			printw("movimiento invalido");
 		}
-
+	
 //************************************************************* TORRES NEGRAS **********************************************************************************************
 
 	}else if (matriz[elegidonum][elegidoletra]=='T'){
@@ -854,8 +981,7 @@ void mover2(int elegidoletra,int elegidonum,int moverletra, int movernumero ,cha
 			printw("movimiento invalido");
 		}
 
-
-//************************************************************** ALFILES NEGROS *********************************************************************************************
+//************************************************************* ALFILES NEGROS *********************************************************************************************
 
 	}else if (matriz[elegidonum][elegidoletra]=='A'){
 		printw("elegidonum");
@@ -954,39 +1080,94 @@ void mover2(int elegidoletra,int elegidonum,int moverletra, int movernumero ,cha
 			}
 		}
 
-//**********************************************************************REINA*************************************************************************************************
+//****************************************************************REINA NEGRA **********************************************************************************************
 
-	}else if (matriz[elegidonum][elegidoletra]=='q'){
-		bool puede=false;
+	}else if (matriz[elegidonum][elegidoletra]=='Q'){
 		int valorletraelejida=(alfilnum(elegidoletra));
 		int  valornumeroletramover=(alfilnum(moverletra));
-		if (movernumero==(elegidonum+1) && moverletra==(elegidoletra+3)){
+		bool puede=true;
+
+
+
+		if(abs(valorletraelejida-valornumeroletramover) && abs(elegidonum-movernumero)){
 			puede=true;
-		}else if (movernumero==elegidonum && moverletra==(elegidoletra+3)){
-			puede=true;
-		}else if(movernumero==(elegidonum-1) && moverletra==(elegidoletra+3)){
-			puede=true;
-		}else if(movernumero==(elegidonum+1) && moverletra==elegidoletra){
-			puede=true;
-		}else if (movernumero==(elegidonum-1) && moverletra==(elegidoletra)){
-			puede=true;
-		}else if(movernumero==(elegidonum+1) && moverletra==(elegidoletra-3)){
-			puede=true;
-		}else if(movernumero==(elegidonum) && moverletra==(elegidoletra-3)){
-			puede=true;
-		}else if(movernumero==(elegidonum-1) && moverletra==(elegidoletra-3)){
-			puede=true;
-		}else  if (elegidoletra==moverletra && elegidonum!=movernumero){
+			if (elegidoletra < moverletra && elegidonum>movernumero){
+				int j=elegidoletra;
+				for (int i = elegidonum-1; i >movernumero-1 ; --i){
+					j-=3;
+					if (matriz[elegidonum][elegidoletra]=='P' || matriz[elegidonum][elegidoletra]=='T' || matriz[elegidonum][elegidoletra]=='C' ||
+						matriz[elegidonum][elegidoletra]=='A' || matriz[elegidonum][elegidoletra]=='R' || matriz[elegidonum][elegidoletra]=='Q'){
+						turn=false;
+						printw("pieza amiga en el camino");
+						break;
+					}else if(matriz[elegidonum][j]=='p' || matriz[elegidonum][j]=='t' || matriz[elegidonum][j]=='c' ||
+						matriz[elegidonum][j]=='a' || matriz[elegidonum][j]=='q' || matriz[elegidonum][j]=='r'){
+						turn=false;
+						printw("pieza enemiga en el camino" );
+						break;
+					}
+
+				}
+			}else if(elegidoletra < moverletra &&  elegidonum > movernumero){
+				int j=elegidoletra;
+				for (int i = elegidonum+1; i >movernumero-1 ; ++i){
+					 j+=3;
+					if (matriz[elegidonum][elegidoletra]=='P' || matriz[elegidonum][elegidoletra]=='T' || matriz[elegidonum][elegidoletra]=='C' ||
+						matriz[elegidonum][elegidoletra]=='A' || matriz[elegidonum][elegidoletra]=='R' || matriz[elegidonum][elegidoletra]=='Q'){
+						turn=false;
+						printw("pieza amiga en el camino");
+						break;
+					}else if(matriz[elegidonum][j]=='p' || matriz[elegidonum][j]=='t' || matriz[elegidonum][j]=='c' ||
+						matriz[elegidonum][j]=='a' || matriz[elegidonum][j]=='q' || matriz[elegidonum][j]=='r'){
+						turn=false;
+						printw("pieza enemiga en el camino 4");
+						break;
+					}
+				}		
+			}else if(elegidoletra > moverletra  && elegidonum < movernumero){
+				int j=elegidoletra;
+				for (int i = elegidonum+1; i > movernumero-1; ++i){
+					j+=3;
+					if (matriz[elegidonum][j]=='P' || matriz[elegidonum][j]=='T' || matriz[elegidonum][j]=='C' ||
+						matriz[elegidonum][j]=='A' || matriz[elegidonum][j]=='Q' || matriz[elegidonum][j]=='R'){
+						turn=false;
+						printw("pieza amiga en el camino" );
+						break;
+					}else if(matriz[elegidonum][j]=='p' || matriz[elegidonum][j]=='t' || matriz[elegidonum][j]=='c' ||
+						matriz[elegidonum][j]=='a' || matriz[elegidonum][j]=='q' || matriz[elegidonum][j]=='r'){
+						turn=false;
+						printw("pieza enemiga en el camino");
+						break;
+					}
+				}
+			}else if(elegidoletra < moverletra  && elegidonum < movernumero){
+				int j=elegidoletra;
+				for (int i = elegidonum; i < movernumero+1; --i){
+				 	j-=3;
+				 	if (matriz[elegidonum][j]=='P' || matriz[elegidonum][j]=='T' || matriz[elegidonum][j]=='C' ||
+						matriz[elegidonum][j]=='A' || matriz[elegidonum][j]=='Q' || matriz[elegidonum][j]=='R'){
+						turn=false;
+						printw("pieza amiga en el camino");
+						break;
+					}else if(matriz[elegidonum][j]=='p' || matriz[elegidonum][j]=='t' || matriz[elegidonum][j]=='c' ||
+						matriz[elegidonum][j]=='a' || matriz[elegidonum][j]=='q' || matriz[elegidonum][j]=='r'){
+						turn=false;
+						printw("pieza enemiga en el camino");
+						break;
+					}
+				}
+			}
+		}else if (elegidoletra==moverletra && elegidonum!=movernumero){
 			for (int j= elegidonum+1; j<movernumero; j++){
-				if (matriz[j][elegidoletra]=='P' || matriz[j][elegidoletra]=='T' || matriz[j][elegidoletra]=='C' || 
-					matriz[j][elegidoletra]=='A' ||matriz[j][elegidoletra]=='R' || matriz[j][elegidoletra]=='Q' ){
-					printw("paso bloqueado por pieza enemiga1");
+				if (matriz[j][elegidoletra]=='p' || matriz[j][elegidoletra]=='t' || matriz[j][elegidoletra]=='c' || 
+					matriz[j][elegidoletra]=='a' ||matriz[j][elegidoletra]=='r' || matriz[j][elegidoletra]=='q' ){
+					printw("paso bloqueado por pieza enemiga");
 					puede=false;
 				
 					break;
-				}else if(matriz[j][elegidoletra]=='p' || matriz[j][elegidoletra]=='t' || matriz[j][elegidoletra]=='c' || 
-					matriz[j][elegidoletra]=='a' ||matriz[j][elegidoletra]=='r' || matriz[j][elegidoletra]=='q' ){
-					printw("paso bloqueado por pieza amiga1");
+				}else if(matriz[j][elegidoletra]=='P' || matriz[j][elegidoletra]=='T' || matriz[j][elegidoletra]=='C' || 
+					matriz[j][elegidoletra]=='A' ||matriz[j][elegidoletra]=='R' || matriz[j][elegidoletra]=='Q' ){
+					printw("paso bloqueado por pieza amiga");
 					puede=false;
 					break;
 				}
@@ -997,15 +1178,15 @@ void mover2(int elegidoletra,int elegidonum,int moverletra, int movernumero ,cha
 				
 				
 				for (int i = elegidoletra+3; i <moverletra; i++){
-					if (matriz[elegidonum][i]=='P' || matriz[elegidonum][i]=='T' || matriz[elegidonum][i]=='C' || 
-						matriz[elegidonum][i]=='A' || matriz[elegidonum][i]=='C' || matriz[elegidonum][i]=='Q'){
-						printw("paso bloqueado por pieza enemiga2");
+					if (matriz[elegidonum][i]=='p' || matriz[elegidonum][i]=='t' || matriz[elegidonum][i]=='c' || 
+						matriz[elegidonum][i]=='a' || matriz[elegidonum][i]=='c' || matriz[elegidonum][i]=='q'){
+						printw("paso bloqueado por pieza enemiga");
 						puede=false;
 						break;	
 
-					}else if(matriz[elegidonum][i]=='p' || matriz[elegidonum][i]=='t' || matriz[elegidonum][i]=='c' || 
-						matriz[elegidonum][i]=='a' || matriz[elegidonum][i]=='r' || matriz[elegidonum][i]=='q'){
-						printw("paso bloqueado por amiga2");	
+					}else if(matriz[elegidonum][i]=='P' || matriz[elegidonum][i]=='T' || matriz[elegidonum][i]=='C' || 
+						matriz[elegidonum][i]=='A' || matriz[elegidonum][i]=='R' || matriz[elegidonum][i]=='Q'){
+						printw("paso bloqueado por amiga");	
 						puede=false;
 						break;
 					}
@@ -1014,15 +1195,15 @@ void mover2(int elegidoletra,int elegidonum,int moverletra, int movernumero ,cha
 				}
 			}else{
 				for (int i = elegidoletra-3; i <moverletra; i--){
-					if (matriz[elegidonum][i]=='P' || matriz[elegidonum][i]=='T' || matriz[elegidonum][i]=='C' || 
-						matriz[elegidonum][i]=='A' || matriz[elegidonum][i]=='C' || matriz[elegidonum][i]=='Q'){
-						printw("paso bloqueado por pieza enemiga2");
+					if (matriz[elegidonum][i]=='p' || matriz[elegidonum][i]=='t' || matriz[elegidonum][i]=='c' || 
+						matriz[elegidonum][i]=='a' || matriz[elegidonum][i]=='c' || matriz[elegidonum][i]=='q'){
+						printw("paso bloqueado por pieza enemiga");
 						puede=false;
 						break;	
 
-					}else if(matriz[elegidonum][i]=='p' || matriz[elegidonum][i]=='t' || matriz[elegidonum][i]=='c' || 
-						matriz[elegidonum][i]=='a' || matriz[elegidonum][i]=='r' || matriz[elegidonum][i]=='q'){
-						printw("paso bloqueado por amiga2");	
+					}else if(matriz[elegidonum][i]=='P' || matriz[elegidonum][i]=='T' || matriz[elegidonum][i]=='C' || 
+						matriz[elegidonum][i]=='A' || matriz[elegidonum][i]=='R' || matriz[elegidonum][i]=='Q'){
+						printw("paso bloqueado por amiga");	
 						puede=false;
 						break;
 					}
@@ -1033,98 +1214,20 @@ void mover2(int elegidoletra,int elegidonum,int moverletra, int movernumero ,cha
 			}
 		}else if (elegidoletra!=elegidonum  && movernumero!=moverletra){
 			puede=false;
-		}else  if(abs(valorletraelejida-valornumeroletramover) && abs(elegidonum-movernumero)){
-		 
-			if (elegidoletra < moverletra && elegidonum>movernumero){
-				int j=elegidoletra;
-				for (int i = elegidonum-1; i >movernumero-1 ; --i){
-					j-=3;
-					if (matriz[elegidonum][elegidoletra]=='p' || matriz[elegidonum][elegidoletra]=='t' || matriz[elegidonum][elegidoletra]=='c' ||
-						matriz[elegidonum][elegidoletra]=='a' || matriz[elegidonum][elegidoletra]=='r' || matriz[elegidonum][elegidoletra]=='r'){
-						turn=false;
-						printw("pieza amiga en el camino 1");
-						puede=false;
-						break;
-					}else if(matriz[elegidonum][j]=='P' || matriz[elegidonum][j]=='T' || matriz[elegidonum][j]=='C' ||
-						matriz[elegidonum][j]=='A' || matriz[elegidonum][j]=='Q' || matriz[elegidonum][j]=='R'){
-						turn=false;
-						puede=false;
-						printw("pieza enemiga en el camino 2" );
-						break;
-					}
-
-				}
-			}else if(elegidoletra < moverletra &&  elegidonum > movernumero){
-				int j=elegidoletra;
-				for (int i = elegidonum+1; i >movernumero-1 ; ++i){
-					 j+=3;
-					if (matriz[elegidonum][elegidoletra]=='p' || matriz[elegidonum][elegidoletra]=='t' || matriz[elegidonum][elegidoletra]=='c' ||
-						matriz[elegidonum][elegidoletra]=='a' || matriz[elegidonum][elegidoletra]=='r' || matriz[elegidonum][elegidoletra]=='r'){
-						turn=true;
-						printw("pieza amiga en el camino 3");
-						puede=false;
-						break;
-					}else if(matriz[elegidonum][j]=='P' || matriz[elegidonum][j]=='T' || matriz[elegidonum][j]=='C' ||
-						matriz[elegidonum][j]=='A' || matriz[elegidonum][j]=='Q' || matriz[elegidonum][j]=='R'){
-						turn=true;
-						printw("pieza enemiga en el camino 4");
-						break;
-					}
-				}		
-			}else if(elegidoletra > moverletra  && elegidonum < movernumero){
-				int j=elegidoletra;
-				for (int i = elegidonum+1; i > movernumero-1; ++i){
-					j+=3;
-					if (matriz[elegidonum][j]=='p' || matriz[elegidonum][j]=='t' || matriz[elegidonum][j]=='c' ||
-						matriz[elegidonum][j]=='a' || matriz[elegidonum][j]=='r' || matriz[elegidonum][j]=='r'){
-						turn=true;
-						puede=false;
-						printw("pieza amiga en el camino 5" );
-						break;
-					}else if(matriz[elegidonum][j]=='P' || matriz[elegidonum][j]=='T' || matriz[elegidonum][j]=='C' ||
-						matriz[elegidonum][j]=='A' || matriz[elegidonum][j]=='Q' || matriz[elegidonum][j]=='R'){
-						turn=true;
-						puede=false;
-						printw("pieza enemiga en el camino");
-						break;
-					}
-				}
-			}else if(elegidoletra < moverletra  && elegidonum < movernumero){
-				int j=elegidoletra;
-				for (int i = elegidonum; i < movernumero+1; --i){
-				 	j-=3;
-				 	if (matriz[elegidonum][j]=='p' || matriz[elegidonum][j]=='t' || matriz[elegidonum][j]=='c' ||
-						matriz[elegidonum][j]=='a' || matriz[elegidonum][j]=='r' || matriz[elegidonum][j]=='r'){
-						turn=true;
-						puede=false;
-						printw("pieza amiga en el camino 6");
-						break;
-					}else if(matriz[elegidonum][j]=='P' || matriz[elegidonum][j]=='T' || matriz[elegidonum][j]=='C' ||
-						matriz[elegidonum][j]=='A' || matriz[elegidonum][j]=='Q' || matriz[elegidonum][j]=='R'){
-						turn=true;
-						puede=false;
-						printw("pieza enemiga en el camino");
-						break;
-					}
-				}
-			}
 		}
-
-
+		
 		if (puede){
-			if (matriz[elegidonum][elegidoletra]=='p' || matriz[elegidonum][elegidoletra]=='t' || matriz[elegidonum][elegidoletra]=='c' ||
-				matriz[elegidonum][elegidoletra]=='a' || matriz[elegidonum][elegidoletra]=='r' ){
-				printw("hay una pieza amiga en esa poscicon");
-				
-			}else{
+			if(matriz[movernumero][moverletra]=='P' ||  matriz[movernumero][moverletra]=='T' || matriz[movernumero][moverletra]=='C' || 
+			matriz[movernumero][moverletra]=='A' || matriz[movernumero][moverletra]=='R' || matriz[movernumero][moverletra]=='Q'){
+				printw("Ya existe una pieza amiga en esa pocicion");
+			}else {
 				matriz[elegidonum][elegidoletra]='_';
-				matriz[movernumero][moverletra]='q';
+				matriz[movernumero][moverletra]='Q';
+				turn=false;
 			}
 		}
 
-
-
-       //***************************************************************REY BLANCO***************************************************************************************************
+//*************************************************************REY BLANCO***************************************************************************************************
 	}else if (matriz[elegidonum][elegidoletra]=='R'){
 		bool puede=false;
 		if (movernumero==(elegidonum+1) && moverletra==(elegidoletra+3)){
@@ -1198,7 +1301,7 @@ int  distancias(int letra1, int numero1, int letra2,int numero2){
 	}else if(letra1==letra2 && abs(numero1-numero2)==1){
 		return 1;
 	}else if(letra1!=letra2){
-		if(abs(letra1-letra2==3 && abs(numero1-numero2)==1)){
+		if(abs(letra1-letra2)==3 && abs(numero1-numero2)==1){
 			return 3;
 		}
 	}else{
@@ -1465,9 +1568,6 @@ int cordnumerica2(char num[]){
 	return numero;
 
 }
-
-
-
 
  
 
